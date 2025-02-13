@@ -137,7 +137,7 @@ def page2():
 
 
 def page3():
-    st.sidebar.markdown("# SAMACHARAM 2 ❄️")
+    st.sidebar.markdown("# SAMACHARAM 2 🎉")
     st.markdown("## Profit Vs Month")
     df_month = data.groupby(['order month', 'order year'])
     df_pro = df_month.aggregate({'Profit': 'sum'})
