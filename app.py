@@ -5,45 +5,26 @@ import seaborn as sns
 import datetime as dt
 import json
 import streamlit as st
-
-data = pd.read_csv('superstore.csv')
-data[['order_day', 'order_month', 'order_year']] = data['Order Date'].str.split('-', expand=True)
-data['Order Date'] = data['order_year'] + '/' + data['order_month'] + '/' + data['order_day']
-data['Order Date'] = pd.to_datetime(data['Order Date'])
-data[['ship_day', 'ship_month', 'ship_year']] = data['Ship Date'].str.split('-', expand=True)
-data['Ship Date'] = data['ship_year'] + '/' + data['ship_month'] + '/' + data['ship_day']
-data['Ship Date'] = pd.to_datetime(data['Ship Date'])
-data.drop(columns=['order_day', 'order_month', 'order_year', 'ship_day', 'ship_month', 'ship_year', 'Unnamed: 0'], inplace=True)
-data['Ship Mode'] = data['Ship Mode'].astype('category')
-data['Segment'] = data['Segment'].astype('category')
-data['Country'] = data['Country'].astype('category')
-data['Market'] = data['Market'].astype('category')
-data['Region'] = data['Region'].astype('category')
-data['Category'] = data['Category'].astype('category')
-data['Sub-Category'] = data['Sub-Category'].astype('category')
-data['Order Priority'] = data['Order Priority'].astype('category')
+import process as ps
 
 
-def removeSpaces(df):
-    for cols in df.columns:
-        if df[cols].dtypes in ['object', 'category']:
-            df[cols] = df[cols].str.strip()
-        return df
-
-
-data = removeSpaces(data)
 st.set_page_config(page_title="SAMACHARA DRUSHYA")
 st.title('EDATUM SAMACHARA DRUSHYA')
 
 
-def mainPage():
+data = ps.load_data("superstore.csv")
+data = ps.prepare_data(data)
+data = ps.remove_spaces(data)
+
+@st.cache_data
+def page1():
     st.sidebar.markdown("# EDATUM 🎈")
     st.subheader('Super Store Dataset')
     st.dataframe(data)
     st.subheader('Numerical Statistics')
-    st.dataframe(data.describe())
+    st.dataframe(ps.get_summary_stats(data))
 
-
+@st.cache_data
 def page2():
     st.sidebar.markdown("# SAMACHARAM 1 ❄️")
     country_group = data.groupby('Country')
@@ -136,6 +117,7 @@ def page2():
     st.pyplot(fig)
 
 
+@st.cache_data
 def page3():
     st.sidebar.markdown("# SAMACHARAM 2 🎉")
     st.markdown("## Profit Vs Month")
@@ -154,7 +136,6 @@ def page3():
     st.markdown("## Countries VS Sales")
     with open('iso_mapping.json', 'r') as json_file:
         iso_mapping = json.load(json_file)
-    print(iso_mapping)
     country_group = data.groupby('Country')
     country_sales = country_group.agg({'Sales': 'sum'})
     df = country_sales.reset_index()
@@ -167,7 +148,7 @@ def page3():
 
 
 page_names_to_funcs = {
-    "EDATUM": mainPage,
+    "EDATUM"      : page1,
     "SAMACHARAM 1": page2,
     "SAMACHARAM 2": page3,
 }
