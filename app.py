@@ -16,6 +16,7 @@ data = ps.load_data("superstore.csv")
 data = ps.prepare_data(data)
 data = ps.remove_spaces(data)
 
+
 @st.cache_data
 def page1():
     st.sidebar.markdown("# EDATUM 🎈")
@@ -23,6 +24,7 @@ def page1():
     st.dataframe(data)
     st.subheader('Numerical Statistics')
     st.dataframe(ps.get_summary_stats(data))
+
 
 @st.cache_data
 def page2():
@@ -152,6 +154,7 @@ page_names_to_funcs = {
     "SAMACHARAM 1": page2,
     "SAMACHARAM 2": page3,
 }
+
 
 selected_page = st.sidebar.selectbox("Select a page", page_names_to_funcs.keys())
 page_names_to_funcs[selected_page]()
