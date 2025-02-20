@@ -1,14 +1,18 @@
 import pandas as pd
+import streamlit as st
 
 
+@st.cache_data
 def load_data(filename):
     return pd.read_csv(filename)
 
 
+@st.cache_data
 def get_summary_stats(data):
     return data.describe()
 
 
+@st.cache_data
 def prepare_data(data):
     # Process Columns
     data[['order_day', 'order_month', 'order_year']] = data['Order Date'].str.split('-', expand=True)
@@ -33,6 +37,7 @@ def prepare_data(data):
     return data
 
 
+@st.cache_data
 def remove_spaces(data):
     for cols in data.columns:
         if data[cols].dtypes in ['object', 'category']:
