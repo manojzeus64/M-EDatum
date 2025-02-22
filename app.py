@@ -20,8 +20,8 @@ data = ps.remove_spaces(data)
 @st.cache_data
 def page1():
     st.sidebar.markdown("# EDATUM 🎈")
-    st.subheader('Super Store Dataset')
-    st.dataframe(data)
+    st.subheader('Dataset First 10 Records')
+    st.dataframe(data.head(10))
     st.subheader('Numerical Statistics')
     st.dataframe(ps.get_summary_stats(data))
 
@@ -29,7 +29,7 @@ def page1():
 @st.cache_data
 def page2():
     st.sidebar.markdown("# SAMACHARAM 1 ❄️")
-    country_group = data.groupby('Country')
+    country_group = data.groupby('Country', observed=False)
     country_sales = country_group.agg({'Sales': 'sum'})
     country_sales.sort_values(by='Sales', ascending=False)
     top_7 = country_sales.nlargest(7, 'Sales')
@@ -43,7 +43,7 @@ def page2():
     st.pyplot(fig)
 
     st.markdown("## Segment Of Customers VS Profit")
-    custSeg = data.groupby('Segment')
+    custSeg = data.groupby('Segment', observed=False)
     df = custSeg.aggregate({'Profit': 'sum'})
     df.reset_index(inplace=True)
     fig = plt.figure(figsize=(5, 8))
@@ -57,10 +57,10 @@ def page2():
     st.pyplot(fig)
 
     st.markdown("## Top 5 Profit-Making Product Types")
-    year_category_group = data.groupby(['order year', 'Sub-Category'])
+    year_category_group = data.groupby(['order year', 'Sub-Category'], observed=False)
     year_category_profit_df = year_category_group.agg({'Profit': 'sum'})
     year_category_profit_df.reset_index(inplace=True)
-    category_yearly_profit = year_category_profit_df.groupby('order year')
+    category_yearly_profit = year_category_profit_df.groupby('order year', observed=False)
     top5_profit_category = pd.DataFrame(columns=year_category_profit_df.columns)
 
     for g, d in category_yearly_profit:
@@ -71,32 +71,32 @@ def page2():
     plt.subplot(2, 2, 1)
     x = list(top5_profit_category[top5_profit_category['order year'] == 2012]['Sub-Category'])
     y = top5_profit_category[top5_profit_category['order year'] == 2012]['Profit']
-    sns.barplot(x=x, y=y, palette='husl')
+    sns.barplot(x=x, y=y, palette='husl', hue=x, legend=False)
     plt.title("Year-2012")
 
     plt.subplot(2, 2, 2)
     x = list(top5_profit_category[top5_profit_category['order year'] == 2013]['Sub-Category'])
     y = top5_profit_category[top5_profit_category['order year'] == 2013]['Profit']
-    sns.barplot(x=x, y=y, palette='Paired')
+    sns.barplot(x=x, y=y, palette='Paired', hue=x, legend=False)
     plt.title("Year-2013")
 
     plt.subplot(2, 2, 3)
     x = list(top5_profit_category[top5_profit_category['order year'] == 2014]['Sub-Category'])
     y = top5_profit_category[top5_profit_category['order year'] == 2014]['Profit']
-    sns.barplot(x=x, y=y)
+    sns.barplot(x=x, y=y, palette="hls", hue=x, legend=False)
     plt.title("Year-2014")
 
     plt.subplot(2, 2, 4)
     x = list(top5_profit_category[top5_profit_category['order year'] == 2015]['Sub-Category'])
     y = top5_profit_category[top5_profit_category['order year'] == 2015]['Profit']
-    sns.barplot(x=x, y=y, palette='hls')
+    sns.barplot(x=x, y=y, palette='hls', hue=x, legend=False)
     plt.title("Year-2015")
     st.pyplot(fig)
 
     st.markdown("## Delivery Speeds Of Top 20 Countries")
     top_20_sales = country_sales.nlargest(20, 'Sales')
     data['Delivery Duration'] = data['Ship Date'] - data['Order Date']
-    country_group = data.groupby('Country')
+    country_group = data.groupby('Country', observed=False)
     delivery_duration_df = country_group.agg({'Delivery Duration': 'mean'})
     delivery_duration_df['Duration In Hours'] = delivery_duration_df['Delivery Duration'] / dt.timedelta(hours=1)
     top20_sales_country_DD = top_20_sales.merge(delivery_duration_df, how='left', left_index=True, right_index=True)
@@ -123,7 +123,7 @@ def page2():
 def page3():
     st.sidebar.markdown("# SAMACHARAM 2 🎉")
     st.markdown("## Profit Vs Month")
-    df_month = data.groupby(['order month', 'order year'])
+    df_month = data.groupby(['order month', 'order year'], observed=False)
     df_pro = df_month.aggregate({'Profit': 'sum'})
     df_sal = df_month.aggregate({'Sales': 'sum'})
     df_pro.reset_index(inplace=True)
@@ -138,7 +138,7 @@ def page3():
     st.markdown("## Countries VS Sales")
     with open('iso_mapping.json', 'r') as json_file:
         iso_mapping = json.load(json_file)
-    country_group = data.groupby('Country')
+    country_group = data.groupby('Country', observed=False)
     country_sales = country_group.agg({'Sales': 'sum'})
     df = country_sales.reset_index()
     df['ISO Code'] = df['Country'].map(iso_mapping)
