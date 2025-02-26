@@ -1,9 +1,9 @@
-# 📊 **Samachara-Drushya Interactive Dashboard**
+# 📊 **Samachara Drushyam Interactive Dashboard**
 
-### 🎯 **Overview**
+## 📌 **Overview**
 This is an interactive dashboard built for the **technical event "Samachara-Drushya"**, conducted by the **Data Science Department of Pragati Engineering College, Surampalem**. The application provides insightful data visualizations and analytics, helping users explore data effectively.
 
-🔗 **Live Demo**: [Samachara-Drushya Dashboard](https://edatum-740955904071.asia-south1.run.app)
+🔗 **Live Demo**: [Dashboard](https://edatum-740955904071.asia-south1.run.app)
 
 ## 🚀 **Features**
 ✅ **Interactive Visualizations** – Built using **Matplotlib, Seaborn, and Plotly** for dynamic data representation.<br>
